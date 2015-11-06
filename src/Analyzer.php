@@ -35,7 +35,7 @@ class Analyzer
             $this->addReport($this->analyzeZip($zip));
         }
 
-        return $this->getReports();
+        return $this;
     }
 
     private function analyzeZip($path)
@@ -60,5 +60,24 @@ class Analyzer
         }
 
         return $report;
+    }
+
+    public function writeReport($path)
+    {
+        $data = [];
+
+        foreach ($this->getReports() as $report) {
+            $data[$report->getModuleName()] = $report->toArray();
+        }
+
+        file_put_contents(
+            $path,
+            json_encode(
+                $data,
+                JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES
+            )
+        );
+
+        return $this;
     }
 }

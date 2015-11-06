@@ -78,4 +78,14 @@ class ModuleReport
             count($this->availableHooks)
         );
     }
+
+    public function toArray()
+    {
+        return [
+            'moduleName'        => $this->getModuleName(),
+            'availableHooks'    => array_keys($this->getAvailableHooks()),
+            'registeredHooks'   => array_keys($this->getRegisteredHooks()),
+            'overrides'         => $this->getOverrides()
+        ];
+    }
 }
