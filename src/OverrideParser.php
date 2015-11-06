@@ -20,7 +20,7 @@ class OverrideParser
 
     private function parseFunctions($contents)
     {
-        $regExp     = "/^\\s*(?:(?:public|protected)\\s+)?function\\s+(\\w+)\\s*\\(/m";
+        $regExp     = "/^\\s*(?:(?:public|protected)\\s+)?(?:static\\s+)?function\\s+(\\w+)\\s*\\(/m";
         $matches    = [];
         preg_match_all($regExp, $contents, $matches);
         return $matches[1];
