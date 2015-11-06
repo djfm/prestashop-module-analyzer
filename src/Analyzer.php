@@ -2,6 +2,7 @@
 
 namespace PrestaShop\ModuleAnalyzer;
 
+use Exception;
 use ZipArchive;
 
 class Analyzer
@@ -22,7 +23,18 @@ class Analyzer
 
     public function analyze($path)
     {
-        $this->addReport($this->analyzeZip($path));
+        $zips = [];
+
+        if (is_dir($path)) {
+            $zips = glob("$path/*.zip");
+        } else {
+            $zips = [$path];
+        }
+
+        foreach ($zips as $zip) {
+            $this->addReport($this->analyzeZip($zip));
+        }
+
         return $this->getReports();
     }
 

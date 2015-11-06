@@ -16,7 +16,7 @@ function usage($msg = null) {
 }
 
 if (!isset($argv[1]) || !file_exists($argv[1])) {
-    usage("Please provide the path to a PrestaShop module zip archive.");
+    usage("Please provide the path to a PrestaShop module zip archive or to a directory containing zip archives.");
 }
 
 $path = $argv[1];
