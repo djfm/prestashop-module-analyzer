@@ -1,0 +1,18 @@
+{
+    "name": "djfm/prestashop-module-analyzer",
+    "description": "A tool to analyze PrestaShop modules and extract useful information to inform product decisions.",
+    "authors": [
+        {
+            "name": "djfm",
+            "email": "fm.de.jouvencel@gmail.com"
+        }
+    ],
+    "require": {
+        "ext-zip": "~1.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "PrestaShop\\ModuleAnalyzer\\": "src/"
+        }
+    }
+}
