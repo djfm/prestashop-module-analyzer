@@ -6,9 +6,24 @@ use ZipArchive;
 
 class Analyzer
 {
+    private $reports = [];
+
+    public function addReport(ModuleReport $report)
+    {
+        echo "$report\n";
+        $this->reports[] = $report;
+        return $this;
+    }
+
+    public function getReports()
+    {
+        return $this->reports;
+    }
+
     public function analyze($path)
     {
-        return $this->analyzeZip($path);
+        $this->addReport($this->analyzeZip($path));
+        return $this->getReports();
     }
 
     private function analyzeZip($path)

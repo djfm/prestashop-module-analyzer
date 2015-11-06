@@ -8,6 +8,12 @@ class ModuleReport
     private $registeredHooks    = [];
     private $availableHooks     = [];
 
+    /**
+     * Overrides contained in this module:
+     * 	['filePath' => ['method1', 'method2', ...]]
+     */
+    private $overrides          = [];
+
     public function __construct($moduleName)
     {
         $this->moduleName = $moduleName;
@@ -23,6 +29,10 @@ class ModuleReport
         $hp = new HookParser;
         array_map([$this, 'addRegisteredHook'], $hp->parseRegisteredHooks($contents));
         array_map([$this, 'addAvailableHook'], $hp->parseAvailableHooks($contents));
+
+        $op = new OverrideParser;
+        $this->addOverride($op->parseOverride($contents));
+
         return $this;
     }
 
@@ -38,6 +48,12 @@ class ModuleReport
         return $this;
     }
 
+    public function addOverride(array $override)
+    {
+        $this->overrides = array_merge($this->overrides, $override);
+        return $this;
+    }
+
     public function getAvailableHooks()
     {
         return $this->availableHooks;
@@ -46,5 +62,20 @@ class ModuleReport
     public function getRegisteredHooks()
     {
         return $this->registeredHooks;
+    }
+
+    public function getOverrides()
+    {
+        return $this->overrides;
+    }
+
+    public function __toString()
+    {
+        return sprintf(
+            'Module `%1$s` has %2$d overrides and responds to %3$d hooks.',
+            $this->moduleName,
+            count($this->overrides),
+            count($this->availableHooks)
+        );
     }
 }
