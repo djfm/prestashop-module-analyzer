@@ -35,9 +35,9 @@ class Summarizer
 
             foreach ($report->getRegisteredHooks() as $hook) {
                 if (!isset($registeredHooks[$hook])) {
-                    $registeredHooks[$hook] = 0;
+                    $registeredHooks[$hook] = [];
                 }
-                ++$registeredHooks[$hook];
+                $registeredHooks[$hook][] = $report->getModuleName();
             }
         }
         arsort($overridenMethods);
@@ -93,10 +93,33 @@ class Summarizer
         }
 
         $popularHooks = [];
-        foreach (array_slice($registeredHooks, 0, $limit) as $hook => $n) {
-            $popularHooks[] = sprintf('%1$s (%2$d)', $hook, $n);
+        foreach (array_slice($registeredHooks, 0, $limit) as $hook => $modules) {
+            $popularHooks[] = sprintf('%1$s (%2$d)', $hook, count($modules));
         }
         echo sprintf("\nTop $limit most popular hooks:\n%s\n", implode(', ', $popularHooks));
+        $hooksSheet = $xl->createSheet(2);
+        $hooksSheet->setTitle('Registered Hooks');
+        $hooksSheet->setCellValue('A1', 'Hook');
+        $hooksSheet->setCellValue('B1', '#Registering Modules');
+        $hooksSheet->setCellValue('C1', 'Registering Modules...');
+        $row = 2; $col = 0;
+        foreach ($registeredHooks as $hook => $modules) {
+            $hooksSheet
+                ->getCellByColumnAndRow($col, $row)
+                ->setValue($hook)
+            ;
+            $hooksSheet
+                ->getCellByColumnAndRow($col + 1, $row)
+                ->setValue(count($modules))
+            ;
+            foreach ($modules as $colOffset => $module) {
+                $hooksSheet
+                    ->getCellByColumnAndRow($col + 1 + $colOffset + 1, $row)
+                    ->setValue($module)
+                ;
+            }
+            ++$row;
+        }
 
         $objWriter = new PHPExcel_Writer_Excel2007($xl);
         $objWriter->save($target);
