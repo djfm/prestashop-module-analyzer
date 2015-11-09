@@ -26,9 +26,9 @@ class Summarizer
                     foreach ($methods as $method) {
                         $fqMethod = "$class::$method";
                         if (!isset($overridenMethods[$fqMethod])) {
-                            $overridenMethods[$fqMethod] = 0;
+                            $overridenMethods[$fqMethod] = [];
                         }
-                        ++$overridenMethods[$fqMethod];
+                        $overridenMethods[$fqMethod][] = $report->getModuleName();
                     }
                 }
             }
@@ -50,6 +50,7 @@ class Summarizer
             round(100 * $shareWithOverrides, 2)
         );
 
+        $sheet->setTitle('Summary');
         $sheet->setCellValue('A1', 'Analyzed modules');
         $sheet->setCellValue('B1', $nModules);
 
@@ -63,10 +64,33 @@ class Summarizer
         $limit = 50;
 
         $popularOverrides = [];
-        foreach (array_slice($overridenMethods, 0, $limit) as $fqMethod => $n) {
-            $popularOverrides[] = sprintf('%1$s (%2$d)', $fqMethod, $n);
+        foreach (array_slice($overridenMethods, 0, $limit) as $fqMethod => $modules) {
+            $popularOverrides[] = sprintf('%1$s (%2$d)', $fqMethod, count($modules));
         }
         echo sprintf("\nTop $limit most popular overrides:\n%s\n", implode(', ', $popularOverrides));
+        $overridesSheet = $xl->createSheet(1);
+        $overridesSheet->setTitle('Overrides');
+        $overridesSheet->setCellValue('A1', 'Overriden Method');
+        $overridesSheet->setCellValue('B1', '#Overriding Modules');
+        $overridesSheet->setCellValue('C1', 'Overriding Modules...');
+        $row = 2; $col = 0;
+        foreach ($overridenMethods as $method => $modules) {
+            $overridesSheet
+                ->getCellByColumnAndRow($col, $row)
+                ->setValue($method)
+            ;
+            $overridesSheet
+                ->getCellByColumnAndRow($col + 1, $row)
+                ->setValue(count($modules))
+            ;
+            foreach ($modules as $colOffset => $module) {
+                $overridesSheet
+                    ->getCellByColumnAndRow($col + 1 + $colOffset + 1, $row)
+                    ->setValue($module)
+                ;
+            }
+            ++$row;
+        }
 
         $popularHooks = [];
         foreach (array_slice($registeredHooks, 0, $limit) as $hook => $n) {
