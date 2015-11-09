@@ -88,4 +88,16 @@ class ModuleReport
             'overrides'         => $this->getOverrides()
         ];
     }
+
+    public function fromArray(array $data)
+    {
+        foreach ($data['availableHooks'] as $hook) {
+            $this->addAvailableHook($hook);
+        }
+        foreach ($data['registeredHooks'] as $hook) {
+            $this->addRegisteredHook($hook);
+        }
+        $this->addOverride($data['overrides']);
+        return $this;
+    }
 }
