@@ -7,7 +7,7 @@ require implode(DIRECTORY_SEPARATOR, [
     __DIR__, 'vendor', 'autoload.php'
 ]);
 
-$target = 'report.xlsx';
+$target = 'summary.xlsx';
 
 $usage = function ($msg = null) use ($target) {
     echo "Usage: php prestashop-module-analyzer/analyze.php path/to/report.json [output file, default: $target]\n";
